@@ -27,6 +27,7 @@ def main():
     wave_points = []
     wave_lines = []
 
+    # create animation
     while True:
         p.undraw()
         r_line.undraw()
