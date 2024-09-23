@@ -58,9 +58,9 @@ def main():
         # draw a line that connects each wave_point
         x_wave_point = 600 + (angle * 50)
         wave_points.append([x_wave_point, y])
-        for i in range(len(wave_points) - 1, 0, -1):
+        for i in range(len(wave_points) - 1):
             x, y = wave_points[i]
-            nextx, nexty = wave_points[i - 1]
+            nextx, nexty = wave_points[i + 1]
             l = Line(Point(nextx, nexty), Point(x, y))
             l.draw(win)
             wave_lines.append(l)
