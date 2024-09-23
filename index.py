@@ -2,7 +2,7 @@ from graphics import *
 import numpy
 
 def main():
-    win = GraphWin("My Circle", 1500, 700)
+    win = GraphWin("Fourier Square wave visualization", 1500, 700)
     radius = 150
     center_cx = 300
     center_cy = 350
@@ -11,13 +11,27 @@ def main():
     c.draw(win)
 
     # Create a point that will move along the circle
-    p = Circle(Point((center_cx + numpy.cos(angle) * radius), center_cy + numpy.sin(angle) * radius), 5)
+    starting_px = center_cx + numpy.cos(angle) * radius
+    starting_py = center_cy + numpy.sin(angle) * radius
+    p = Circle(Point(starting_px, starting_py), 5)
     p.setFill("red")
     p.draw(win)
 
+    # create a line that points to rotating point on circle from center
+    r_line = Line(Point(center_cx, center_cy), Point(starting_px, starting_py))
+    r_line.draw(win)
+
+    wave_arrow = Line(Point(starting_px, starting_py), Point(600, 350))
+    wave_arrow.draw(win)
+
+    wave_points = []
+
     while True:
         p.undraw()
-        angle += 0.01
+        r_line.undraw()
+        wave_arrow.undraw()
+
+        angle += 0.1
         # get x,y coordinates from polar
         x = center_cx + numpy.cos(angle) * radius
         y = center_cy + numpy.sin(angle) * radius
@@ -25,9 +39,30 @@ def main():
         p.setFill("red")
         p.draw(win)
 
+        r_line = Line(Point(center_cx, center_cy), Point(x, y))
+        r_line.draw(win)
+        wave_arrow = Line(Point(x, y), Point(600, y))
+        wave_arrow.setArrow("last")
+        wave_arrow.draw(win)
+
+        # now append each point that the arrow points to and add to beginning of wave_points array. 
+        # draw a line that connects each wave_point
+
+        x_wave_point = 600 + abs(x)
+        wave_points.append([x_wave_point, y])
+        for i in range(len(wave_points) - 1):
+            x, y = wave_points[i]
+            nextx, nexty = wave_points[i + 1]
+            l = Line(Point(x, y), Point(nextx, nexty))
+            l.draw(win)
+
+        if len(wave_points) > 5:
+            wave_points.pop()
+
+
         # time.sleep(0.015)
 
         if win.checkMouse():
-            break # pause for click in window
+            break
 
 main()
