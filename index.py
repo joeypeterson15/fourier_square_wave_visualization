@@ -25,6 +25,7 @@ def main():
     wave_arrow.draw(win)
 
     wave_points = []
+    wave_lines = []
 
     while True:
         p.undraw()
@@ -45,22 +46,26 @@ def main():
         wave_arrow.setArrow("last")
         wave_arrow.draw(win)
 
+        # remove lines to improve performance
+        if len(wave_lines) > 30:
+            for wl in wave_lines[-5:]:
+                wl.undraw()
+            # wave_points = wave_points[:-5]
+            wave_lines = wave_lines[:-5]
+
         # now append each point that the arrow points to and add to beginning of wave_points array. 
         # draw a line that connects each wave_point
-
-        x_wave_point = 600 + abs(x)
+        x_wave_point = 600 + (angle * 50)
         wave_points.append([x_wave_point, y])
-        for i in range(len(wave_points) - 1):
+        for i in range(len(wave_points) - 1, 0, -1):
             x, y = wave_points[i]
-            nextx, nexty = wave_points[i + 1]
-            l = Line(Point(x, y), Point(nextx, nexty))
+            nextx, nexty = wave_points[i - 1]
+            l = Line(Point(nextx, nexty), Point(x, y))
             l.draw(win)
+            wave_lines.append(l)
 
-        if len(wave_points) > 5:
-            wave_points.pop()
-
-
-        # time.sleep(0.015)
+        win.update()
+        # time.sleep(0.5)
 
         if win.checkMouse():
             break
