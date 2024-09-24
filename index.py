@@ -26,6 +26,8 @@ def main():
 
     wave_points = []
     wave_lines = []
+    prev_x = 600 + (angle * 50)
+    prev_y = starting_py
 
     # create animation
     while True:
@@ -48,22 +50,27 @@ def main():
         wave_arrow.draw(win)
 
         # remove lines to improve performance
-        if len(wave_lines) > 30:
-            for wl in wave_lines[-5:]:
+        if len(wave_lines) > 70:
+            for wl in wave_lines[-1:]:
                 wl.undraw()
             # wave_points = wave_points[:-5]
-            wave_lines = wave_lines[:-5]
+            wave_lines = wave_lines[:-1]
 
         # now append each point that the arrow points to and add to beginning of wave_points array. 
         # draw a line that connects each wave_point
-        x_wave_point = 600 + (angle * 50)
-        wave_points.append([x_wave_point, y])
-        for i in range(len(wave_points) - 1):
-            x, y = wave_points[i]
-            nextx, nexty = wave_points[i + 1]
-            l = Line(Point(nextx, nexty), Point(x, y))
-            l.draw(win)
-            wave_lines.append(l)
+
+
+        nextx = 600 + (angle * 50)
+        nexty = y
+        wave_points.append((nextx, nexty))
+
+        nextx = 600 + (angle * 50)
+        nexty = y
+        l = Line(Point(prev_x, prev_y), Point(nextx, nexty))
+        wave_lines.insert(0,l)
+        l.draw(win)
+        prev_x = nextx
+        prev_y = nexty
 
         win.update()
         # time.sleep(0.5)
