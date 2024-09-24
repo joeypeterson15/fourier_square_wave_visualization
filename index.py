@@ -28,13 +28,15 @@ def main():
     c1radius = 150
     c2radius = 50
     c3radius = 17
+    c4radius = 4
 
-    radii = [c1radius, c2radius, c3radius]
+    radii = [c1radius, c2radius, c3radius, c4radius]
 
     c1 = circleGenerator(c1radius, 300, 350, 0.1)
     c2 = circleGenerator(c2radius, c1.starting_px, c1.starting_py, 0.3)
     c3 = circleGenerator(c3radius, c2.starting_px, c2.starting_py, 0.5)
-    circleInstants = [c1, c2, c3]
+    c4 = circleGenerator(c4radius, c3.starting_px, c3.starting_py, 0.7)
+    circleInstants = [c1, c2, c3, c4]
 
     circleGraphs = []
     for c in circleInstants:
@@ -45,7 +47,7 @@ def main():
     # Create a point that will move along the circle
     rotatingPoints = []
     for c in circleInstants:
-        p = Circle(Point(c.starting_px, c.starting_py), 3)
+        p = Circle(Point(c.starting_px, c.starting_py), 1)
         p.setFill(pointColor)
         p.draw(win)
         rotatingPoints.append(p)
@@ -79,7 +81,6 @@ def main():
         for i in range(len(rotatingPoints)):
             rotatingPoints[i].undraw()
 
-        for i in range(len(circleInstants)):
             circleInstants[i].updateAngle()
             if i >= 1:
                 circleInstants[i].updateCenterCoordinates(circleInstants[i - 1].starting_px, circleInstants[i - 1].starting_py)
@@ -88,18 +89,17 @@ def main():
         # KEEP THIS
         # p.move(c1.starting_px - p.getCenter().getX(), c1.starting_py - p.getCenter().getY())
 
-        for i in range(len(circleInstants)):
-            p = Circle(Point(circleInstants[i].starting_px, circleInstants[i].starting_py), 3)
-            p.setFill("purple")
-            p.draw(win)
-            rotatingPoints[i] = p
-
         for i in range(1, len(circleInstants)):
             cGraph = Circle(Point(circleInstants[i].x_center, circleInstants[i].y_center), radii[i])
             cGraph.draw(win)
             circleGraphs[i] = cGraph
 
         for i in range(len(circleInstants)):
+            p = Circle(Point(circleInstants[i].starting_px, circleInstants[i].starting_py), 1)
+            p.setFill("purple")
+            p.draw(win)
+            rotatingPoints[i] = p
+
             r_line = Line(Point(circleInstants[i].x_center, circleInstants[i].y_center), Point(circleInstants[i].starting_px, circleInstants[i].starting_py))
             r_line.draw(win)
             r_lines[i] = r_line
