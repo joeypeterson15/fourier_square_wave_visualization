@@ -1,57 +1,71 @@
 from graphics import *
 import numpy
 
+class circleGenerator:
+    def __init__(self, r, x, y, offset):
+        self.radius = r
+        self.x_center = x
+        self.y_center = y
+        self.angle = 0
+        self.offset = offset
+        self.starting_px = self.x_center + numpy.cos(self.angle) * self.radius
+        self.starting_py = self.y_center + numpy.sin(self.angle) * self.radius
+
+    def updateAngle(self):
+        self.angle += self.offset
+    def updateCenterCoordinates(self, x, y):
+        self.x_center = x
+        self.y_center = y
+    def updatePCoordinates(self):
+        self.starting_px = self.x_center + numpy.cos(self.angle) * self.radius
+        self.starting_py = self.y_center + numpy.sin(self.angle) * self.radius
+
 def main():
     win = GraphWin("Fourier Square wave visualization", 800, 700, autoflush=False)
-    radius = 150
+
+    c1radius = 150
     c2radius = 50
     c3radius = 17
-    center_cx = 300
-    center_cy = 350
-    angle = 0
-    angle2 = 0
-    angle3 = 0
-    c = Circle(Point(center_cx,center_cy), radius)
-    c.draw(win)
+
+    c1 = circleGenerator(c1radius, 300, 350, 0.1)
+    c1Graph = Circle(Point(c1.x_center,c1.y_center), c1radius)
+    c1Graph.draw(win)
 
     # Create a point that will move along the circle
-    starting_px = center_cx + numpy.cos(angle) * radius
-    starting_py = center_cy + numpy.sin(angle) * radius
-    p = Circle(Point(starting_px, starting_py), 4)
+    p = Circle(Point(c1.starting_px, c1.starting_py), 4)
     p.setFill("purple")
     p.draw(win)
 
-    center_cx2 = starting_px
-    center_cy2 = starting_py
-    c2 = Circle(Point(center_cx2, center_cy2), c2radius)
-    c2.draw(win)
-    starting_px2 = center_cx2 + numpy.cos(angle) * c2radius
-    starting_py2 = center_cy2 + numpy.sin(angle) * c2radius
-    p2 = Circle(Point(starting_px2, starting_py2), 2)
+    c2 = circleGenerator(c2radius, c1.starting_px, c1.starting_py, 0.3)
+
+
+    c2Graph = Circle(Point(c2.x_center, c2.y_center), c2radius)
+    c2Graph.draw(win)
+
+    p2 = Circle(Point(c2.starting_px, c2.starting_py), 2)
     p2.setFill("purple")
     p2.draw(win)
 
-    center_cx3 = starting_px2
-    center_cy3 = starting_py2
-    c3 = Circle(Point(center_cx3, center_cy3), c3radius)
-    c3.draw(win)
-    starting_px3 = center_cx3 + numpy.cos(angle) * c3radius
-    starting_py3 = center_cy3 + numpy.sin(angle) * c3radius
-    p3 = Circle(Point(starting_px3, starting_py3), 1)
+    c3 = circleGenerator(c3radius, c2.starting_px, c2.starting_py, 0.5)
+
+    c3Graph = Circle(Point(c3.x_center, c3.y_center), c3radius)
+    c3Graph.draw(win)
+
+    p3 = Circle(Point(c3.starting_px, c3.starting_py), 1)
     p3.setFill("purple")
     p3.draw(win)
 
     # create a line that points to rotating point on circle from center
-    r_line = Line(Point(center_cx, center_cy), Point(starting_px, starting_py))
+    r_line = Line(Point(c1.x_center, c1.y_center), Point(c1.starting_px, c1.starting_py))
     r_line.draw(win)
 
-    r_line2 = Line(Point(center_cx2, center_cy2), Point(starting_px2, starting_py2))
+    r_line2 = Line(Point(c2.x_center, c2.y_center), Point(c2.starting_px, c2.starting_py))
     r_line2.draw(win)
 
-    r_line3 = Line(Point(center_cx3, center_cy3), Point(starting_px3, starting_py3))
+    r_line3 = Line(Point(c3.x_center, c3.y_center), Point(c3.starting_px, c3.starting_py))
     r_line3.draw(win)
 
-    wave_arrow = Line(Point(starting_px3, starting_py3), Point(600, 350))
+    wave_arrow = Line(Point(c3.starting_px, c3.starting_py), Point(600, 350))
     wave_arrow.draw(win)
 
     wave_points = []
@@ -66,54 +80,52 @@ def main():
         r_line2.undraw()
         r_line3.undraw()
         wave_arrow.undraw()
-        c2.undraw()
+        c2Graph.undraw()
         p2.undraw()
-        c3.undraw()
+        c3Graph.undraw()
         p3.undraw()
 
-        angle += 0.1
-        angle2 += 0.3
-        angle3 += 0.5
+        c1.updateAngle()
+        c1.updatePCoordinates()
+        c2.updateAngle()
+        c2.updateCenterCoordinates(c1.starting_px, c1.starting_py)
+        c2.updatePCoordinates()
+        c3.updateAngle()
+        c3.updateCenterCoordinates(c2.starting_px, c2.starting_py)
+        c3.updatePCoordinates()
+        # get px,py coordinates from polar
 
-        # get x,y coordinates from polar
-        x = center_cx + numpy.cos(angle) * radius
-        y = center_cy + numpy.sin(angle) * radius
-        p.move(x - p.getCenter().getX(), y - p.getCenter().getY())
+        p.move(c1.starting_px - p.getCenter().getX(), c1.starting_py - p.getCenter().getY())
 
-        center_cx2 = x
-        center_cy2 = y
-        c2 = Circle(Point(center_cx2, center_cy2), c2radius)
-        c2.draw(win)
-        starting_px2 = center_cx2 + numpy.cos(angle2) * c2radius
-        starting_py2 = center_cy2 + numpy.sin(angle2) * c2radius
-        p2 = Circle(Point(starting_px2, starting_py2), 2)
+
+        c2Graph = Circle(Point(c2.x_center, c2.y_center), c2radius)
+        c2Graph.draw(win)
+
+        p2 = Circle(Point(c2.starting_px, c2.starting_py), 2)
         p2.setFill("purple")
         p2.draw(win)
 
-        center_cx3 = starting_px2
-        center_cy3 = starting_py2
-        c3 = Circle(Point(center_cx3, center_cy3), c3radius)
-        c3.draw(win)
-        starting_px3 = center_cx3 + numpy.cos(angle3) * c3radius
-        starting_py3 = center_cy3 + numpy.sin(angle3) * c3radius
-        p3 = Circle(Point(starting_px3, starting_py3), 1)
+        c3Graph = Circle(Point(c3.x_center, c3.y_center), c3radius)
+        c3Graph.draw(win)
+
+        p3 = Circle(Point(c3.starting_px, c3.starting_py), 1)
         p3.setFill("purple")
         p3.draw(win)
     
-        r_line = Line(Point(center_cx, center_cy), Point(x, y))
+        r_line = Line(Point(c1.x_center, c1.y_center), Point(c1.starting_px, c1.starting_py))
         r_line.draw(win)
-        r_line2 = Line(Point(center_cx2, center_cy2), Point(starting_px2, starting_py2))
+        r_line2 = Line(Point(c2.x_center, c2.y_center), Point(c2.starting_px, c2.starting_py))
         r_line2.draw(win)
-        r_line3 = Line(Point(center_cx3, center_cy3), Point(starting_px3, starting_py3))
+        r_line3 = Line(Point(c3.x_center, c3.y_center), Point(c3.starting_px, c3.starting_py))
         r_line3.draw(win)
 
-        wave_arrow = Line(Point(starting_px3, starting_py3), Point(600, starting_py3))
+        wave_arrow = Line(Point(c3.starting_px, c3.starting_py), Point(600, c3.starting_py))
         wave_arrow.setArrow("last")
         wave_arrow.draw(win)
 
         translation = 5
         translaterCount = 0
-        wave_points.insert(0, [600, starting_py3])
+        wave_points.insert(0, [600, c3.starting_py])
         for i in range(len(wave_points) - 1):
             x,y = wave_points[i]
             nextx, nexty = wave_points[i + 1]
