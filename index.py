@@ -2,7 +2,7 @@ from graphics import *
 import numpy
 
 def main():
-    win = GraphWin("Fourier Square wave visualization", 1500, 700)
+    win = GraphWin("Fourier Square wave visualization", 1500, 700, autoflush=False)
     radius = 150
     c2radius = 50
     center_cx = 300
@@ -11,7 +11,6 @@ def main():
     angle2 = 0
     c = Circle(Point(center_cx,center_cy), radius)
     c.draw(win)
-
 
     # Create a point that will move along the circle
     starting_px = center_cx + numpy.cos(angle) * radius
@@ -34,7 +33,10 @@ def main():
     r_line = Line(Point(center_cx, center_cy), Point(starting_px, starting_py))
     r_line.draw(win)
 
-    wave_arrow = Line(Point(starting_px, starting_py), Point(600, 350))
+    r_line2 = Line(Point(center_cx2, center_cy2), Point(starting_px2, starting_py2))
+    r_line2.draw(win)
+
+    wave_arrow = Line(Point(starting_px2, starting_py2), Point(600, 350))
     wave_arrow.draw(win)
 
     wave_points = []
@@ -46,6 +48,7 @@ def main():
             line.undraw()
 
         r_line.undraw()
+        r_line2.undraw()
         wave_arrow.undraw()
         c2.undraw()
         p2.undraw()
@@ -70,13 +73,16 @@ def main():
     
         r_line = Line(Point(center_cx, center_cy), Point(x, y))
         r_line.draw(win)
-        wave_arrow = Line(Point(x, y), Point(600, y))
+        r_line2 = Line(Point(center_cx2, center_cy2), Point(starting_px2, starting_py2))
+        r_line2.draw(win)
+
+        wave_arrow = Line(Point(starting_px2, starting_py2), Point(600, starting_py2))
         wave_arrow.setArrow("last")
         wave_arrow.draw(win)
 
         translation = 5
         translaterCount = 0
-        wave_points.insert(0, [600,y])
+        wave_points.insert(0, [600,starting_py2])
         for i in range(len(wave_points) - 1):
             x,y = wave_points[i]
             nextx, nexty = wave_points[i + 1]
