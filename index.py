@@ -1,6 +1,8 @@
 from graphics import *
 import numpy
 
+COLOR = "purple"
+
 class circleGenerator:
     def __init__(self, r, x, y, offset):
         self.radius = r
@@ -20,23 +22,22 @@ class circleGenerator:
         self.starting_px = self.x_center + numpy.cos(self.angle) * self.radius
         self.starting_py = self.y_center + numpy.sin(self.angle) * self.radius
 
-def main():
+def main(n, startingRadius):
     win = GraphWin("Fourier Square wave visualization", 800, 700, autoflush=False)
 
     pointColor = "purple"
 
-    c1radius = 150
-    c2radius = 50
-    c3radius = 17
-    c4radius = 4
+    radii = [startingRadius]
+    offsets = [0.1]
+    circleInstants = [circleGenerator(radii[0], 300, 350, 0.1)]
+    for i in range(1, n):
+        radius = startingRadius/(i * 3)
+        radii.append(radius)
+        offset = offsets[i - 1] + 2 / 10
+        offsets.append(offset)
 
-    radii = [c1radius, c2radius, c3radius, c4radius]
-
-    c1 = circleGenerator(c1radius, 300, 350, 0.1)
-    c2 = circleGenerator(c2radius, c1.starting_px, c1.starting_py, 0.3)
-    c3 = circleGenerator(c3radius, c2.starting_px, c2.starting_py, 0.5)
-    c4 = circleGenerator(c4radius, c3.starting_px, c3.starting_py, 0.7)
-    circleInstants = [c1, c2, c3, c4]
+        c = circleGenerator(radius, circleInstants[i - 1].starting_px, circleInstants[i - 1].starting_py, offset)
+        circleInstants.append(c)
 
     circleGraphs = []
     for c in circleInstants:
@@ -75,10 +76,10 @@ def main():
 
         wave_arrow.undraw()
 
-        for i in range(1, len(circleGraphs)):
+        for i in range(1, n):
             circleGraphs[i].undraw()
 
-        for i in range(len(rotatingPoints)):
+        for i in range(n):
             rotatingPoints[i].undraw()
 
             circleInstants[i].updateAngle()
@@ -89,14 +90,14 @@ def main():
         # KEEP THIS
         # p.move(c1.starting_px - p.getCenter().getX(), c1.starting_py - p.getCenter().getY())
 
-        for i in range(1, len(circleInstants)):
+        for i in range(1, n):
             cGraph = Circle(Point(circleInstants[i].x_center, circleInstants[i].y_center), radii[i])
             cGraph.draw(win)
             circleGraphs[i] = cGraph
 
-        for i in range(len(circleInstants)):
+        for i in range(n):
             p = Circle(Point(circleInstants[i].starting_px, circleInstants[i].starting_py), 1)
-            p.setFill("purple")
+            p.setFill(COLOR)
             p.draw(win)
             rotatingPoints[i] = p
 
@@ -128,4 +129,6 @@ def main():
         if win.checkMouse():
             break
 
-main()
+n = 20
+outerRadius = 150
+main(n, outerRadius)
